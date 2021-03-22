@@ -1,0 +1,11 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs
+/BorsukSoftware.Testing.Comparison.Core/bin
+/BorsukSoftware.Testing.Comparison.Core/obj
+/BorsukSoftware.Testing.Comparison.Core.Tests/bin
+/BorsukSoftware.Testing.Comparison.Core.Tests/obj
+/Examples/bin
+/Examples/obj
