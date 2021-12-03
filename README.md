@@ -15,6 +15,7 @@ To see examples of how to use the library, see the 'Examples' project.
 #### Supported features out of the box
 There are plugins to compare:
 
+* byte / sbyte
 * int (16|32|64)
 * uint (16|32|64)
 * general (signed|unsigned) integers (treats items as their long equivalents)
@@ -35,7 +36,7 @@ Where appropriate, the default plugins allow a user to specify a tolerance so th
 Unit tests are great where there is always a known outcome, the range of inputs is easy to know and changes are rare. We use comparative tests to handle cases where we're making a change to an entire process (whether configuration, a maths library which is used, the nature of the process etc.) and we want to know 2 items:
 
 1. Is there an impact to the output
-2. What is the actuall impact.
+2. What is the actual impact.
 
 To give a concrete example, assuming one was making a change to the way some analytics calculated an output within a derivatives workflow, one would naturally write unit tests in the underlying library to confirm that the behaviour was as expected. However, the range of possible inputs / market data etc. which one might actually have in production would typically be vastly greater than the range of inputs coverable in the unit tests, not to mention that one may not be aware of the full set of possible impacts (e.g. a developer may only be aware of the conventions of developed markets and so only test them, whereas their analytics are being used to EMG markets as well). This library could be used to  generate a report showing the differences at the high level system level post that change. The person responsible for signing off that change would then be able to view the differences and hopefully verify that no unexpected changes had slipped in. 
 

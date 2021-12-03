@@ -5,7 +5,7 @@ using System.Text;
 namespace BorsukSoftware.Testing.Comparison.Plugins
 {
 	/// <summary>
-	/// Comparer Which can compare numeric values for all signed integer types, i.e. <see cref="Int16"/>, <see cref="Int32"/> and <see cref="Int64"/>
+	/// Comparer Which can compare numeric values for all signed integer types, i.e. <see cref="sbyte"/>, <see cref="Int16"/>, <see cref="Int32"/> and <see cref="Int64"/>
 	/// </summary>
 	public class IntComparerPlugin : IObjectComparerPlugin
 	{
@@ -19,6 +19,7 @@ namespace BorsukSoftware.Testing.Comparison.Plugins
 			bool IsIntType(object o)
 			{
 				return
+					o is sbyte ||
 					o is Int16 ||
 					o is Int32 ||
 					o is Int64;
@@ -28,7 +29,8 @@ namespace BorsukSoftware.Testing.Comparison.Plugins
 			{
 				return o is long l ? l :
 					o is int i ? (long)i :
-					o is short s ? (long)s : 
+					o is short s ? (long)s :
+					o is sbyte sb ? (long)sb :
 					0L;
 			}
 

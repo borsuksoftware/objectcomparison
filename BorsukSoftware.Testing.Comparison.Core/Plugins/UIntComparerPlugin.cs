@@ -5,7 +5,7 @@ using System.Text;
 namespace BorsukSoftware.Testing.Comparison.Plugins
 {
 	/// <summary>
-	/// Comparer Which can compare numeric values for all unsigned integer types, i.e. <see cref="UInt16"/>, <see cref="UInt32"/> and <see cref="UInt64"/>
+	/// Comparer Which can compare numeric values for all unsigned integer types, i.e. <see cref="byte"/>, <see cref="UInt16"/>, <see cref="UInt32"/> and <see cref="UInt64"/>
 	/// </summary>
 	/// <remarks>This plugin will try to do its comparison using ulongs and therefore the output type will be ulong as well, which means that differences which
 	/// a human would think to be negative will have wrapped round and be rather large numbers
@@ -22,6 +22,7 @@ namespace BorsukSoftware.Testing.Comparison.Plugins
 			bool IsIntType(object o)
 			{
 				return
+					o is byte ||
 					o is UInt16 ||
 					o is UInt32 ||
 					o is UInt64;
@@ -32,6 +33,7 @@ namespace BorsukSoftware.Testing.Comparison.Plugins
 				return o is ulong l ? l :
 					o is uint i ? (ulong)i :
 					o is ushort s ? (ulong)s :
+					o is byte b ? (ulong)b :
 					0L;
 			}
 
