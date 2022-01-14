@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BorsukSoftware.Testing.Comparison.Core\BorsukSoftware.Testing.Comparison.Core.csproj" />
+    <ProjectReference Include="..\BorsukSoftware.Testing.Comparison.Extensions.Collections\BorsukSoftware.Testing.Comparison.Extensions.Collections.csproj" />
   </ItemGroup>
 
 </Project>

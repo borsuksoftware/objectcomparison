@@ -5,9 +5,11 @@ VisualStudioVersion = 16.0.30907.101
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BorsukSoftware.Testing.Comparison.Core", "BorsukSoftware.Testing.Comparison.Core\BorsukSoftware.Testing.Comparison.Core.csproj", "{872B736D-3017-4C9A-9099-DE9622F74832}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BorsukSoftware.Testing.Comparison.Core.Tests", "BorsukSoftware.Testing.Comparison.Core.Tests\BorsukSoftware.Testing.Comparison.Core.Tests.csproj", "{0123FFFD-E892-483F-B297-2D65A3E3F962}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BorsukSoftware.Testing.Comparison.Tests", "BorsukSoftware.Testing.Comparison.Tests\BorsukSoftware.Testing.Comparison.Tests.csproj", "{0123FFFD-E892-483F-B297-2D65A3E3F962}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Examples", "Examples\Examples.csproj", "{0BF382CB-F491-4336-B290-02D45D08EEDA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Examples", "Examples\Examples.csproj", "{0BF382CB-F491-4336-B290-02D45D08EEDA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BorsukSoftware.Testing.Comparison.Extensions.Collections", "BorsukSoftware.Testing.Comparison.Extensions.Collections\BorsukSoftware.Testing.Comparison.Extensions.Collections.csproj", "{F08F432E-6105-45E6-8D32-5420A4A6B5F0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{0BF382CB-F491-4336-B290-02D45D08EEDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0BF382CB-F491-4336-B290-02D45D08EEDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0BF382CB-F491-4336-B290-02D45D08EEDA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F08F432E-6105-45E6-8D32-5420A4A6B5F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F08F432E-6105-45E6-8D32-5420A4A6B5F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F08F432E-6105-45E6-8D32-5420A4A6B5F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F08F432E-6105-45E6-8D32-5420A4A6B5F0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

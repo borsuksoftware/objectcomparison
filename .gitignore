@@ -5,7 +5,11 @@
 /.vs
 /BorsukSoftware.Testing.Comparison.Core/bin
 /BorsukSoftware.Testing.Comparison.Core/obj
-/BorsukSoftware.Testing.Comparison.Core.Tests/bin
-/BorsukSoftware.Testing.Comparison.Core.Tests/obj
+/BorsukSoftware.Testing.Comparison.Extensions.Collections/obj
+/BorsukSoftware.Testing.Comparison.Extensions.Collections/bin
+/BorsukSoftware.Testing.Comparison.Tests/bin
+/BorsukSoftware.Testing.Comparison.Tests/obj
 /Examples/bin
 /Examples/obj
+/Examples/Examples.csproj.user
+/packages
