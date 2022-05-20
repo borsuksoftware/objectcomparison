@@ -5,13 +5,9 @@ using System.Linq;
 namespace BorsukSoftware.Testing.Comparison.Extensions.Collections
 {
     /// <summary>
-    /// Class to compare sets of objects based off generating an arbitrary key as a function of the object to be compared
+    /// Class to compare sets of objects based off using the object flattener framework and an arbitrary key function
     /// </summary>
     /// <remarks>
-    /// <para>This should no longer be used but is left for compatibility reasons. This functionality is now available in
-    /// <see cref="ObjectSetComparerStandard"/> or if you require more control over how the comparisons are performed, then
-    /// use <see cref="ObjectSetComparerAdvanced"/>.</para>
-    /// 
     /// <para>Comparisons are performed by flattening each object using the initially supplied <see cref="BorsukSoftware.ObjectFlattener.IObjectFlattener"/>
     /// and <see cref="BorsukSoftware.Testing.Comparison.IObjectComparer"/> instances. If a more complicated approach is needed, then look at
     /// <see cref="ObjectSetComparerAdvanced"/></para>
@@ -19,8 +15,7 @@ namespace BorsukSoftware.Testing.Comparison.Extensions.Collections
     /// <para>This code works on the assumption that the ordering isn't important, if this is not the case, then the key generation func
     /// does get given the index within the collection of the object which it's operating on. This index can be passed into the resulting
     /// key dictionary to get position sensitive results.</para></remarks>
-    [Obsolete("This has been superceded by ObjectSetComparerStandard which returns more information")]
-    public class ObjectSetComparer
+    public class ObjectSetComparerStandard
     {
         #region Data Model
 
@@ -43,10 +38,16 @@ namespace BorsukSoftware.Testing.Comparison.Extensions.Collections
         /// </summary>
         /// <param name="objectFlattener">The underlying object flattener to use to convert objects to a comparable state</param>
         /// <param name="underlyingComparer">The underlying object comparer to use to compare the objects</param>
-        public ObjectSetComparer(
+        public ObjectSetComparerStandard(
             BorsukSoftware.ObjectFlattener.IObjectFlattener objectFlattener,
             IObjectComparer underlyingComparer)
         {
+            if (objectFlattener == null)
+                throw new ArgumentNullException(nameof(objectFlattener));
+
+            if (underlyingComparer == null)
+                throw new ArgumentNullException(nameof(underlyingComparer));
+
             this.ObjectFlattener = objectFlattener;
             this.UnderlyingComparer = underlyingComparer;
         }
@@ -95,49 +96,56 @@ namespace BorsukSoftware.Testing.Comparison.Extensions.Collections
                 existingTuple.ActualValues.Add(obj);
             }
 
-            var matchingKeysCount = 0;
-            var differences = new List<KeyValuePair<IReadOnlyDictionary<string, object>, IReadOnlyCollection<KeyValuePair<string, ComparisonResults>>>>();
-            var missingKeys = new List<IReadOnlyDictionary<string, object>>();
-            var additionalKeys = new List<IReadOnlyDictionary<string, object>>();
-            var incomparable = new List<KeyValuePair<IReadOnlyDictionary<string, object>, (IReadOnlyCollection<T> expectedObjects, IReadOnlyCollection<T> actualObjects)>>();
+            var matching = new Dictionary<IReadOnlyDictionary<string, object>, (T Expected, T Actual)>();
+            var differences = new Dictionary<IReadOnlyDictionary<string, object>, (T Expected, T Actual, IReadOnlyCollection<KeyValuePair<string, ComparisonResults>> Differences)>();
+            var missingKeys = new Dictionary<IReadOnlyDictionary<string, object>, T>();
+            var additionalKeys = new Dictionary<IReadOnlyDictionary<string, object>, T>();
+            var incomparable = new Dictionary<IReadOnlyDictionary<string, object>, (IReadOnlyCollection<T> expectedObjects, IReadOnlyCollection<T> actualObjects)>();
 
             foreach (var pair in allObjectsByKey)
             {
+                if (pair.Value.ExpectedValues.Count > 1 || pair.Value.ActualValues.Count > 1)
+                {
+                    incomparable.Add(pair.Key, (pair.Value.ExpectedValues, pair.Value.ActualValues));
+                    continue;
+
+                }
                 if (pair.Value.ActualValues.Count > 0 && pair.Value.ExpectedValues.Count == 0)
                 {
-                    additionalKeys.Add(pair.Key);
+                    additionalKeys.Add(pair.Key, pair.Value.ActualValues[0]);
                     continue;
                 }
 
                 if (pair.Value.ActualValues.Count == 0 && pair.Value.ExpectedValues.Count > 0)
                 {
-                    missingKeys.Add(pair.Key);
+                    missingKeys.Add(pair.Key, pair.Value.ExpectedValues[0]);
                     continue;
                 }
 
                 // Handle one-to-one map
                 if (pair.Value.ActualValues.Count == 1 && pair.Value.ExpectedValues.Count == 1)
                 {
-                    var expectedObjectFlattenedValues = this.ObjectFlattener.FlattenObject(null, pair.Value.ExpectedValues[0]);
-                    var actualObjectFlattenedValues = this.ObjectFlattener.FlattenObject(null, pair.Value.ActualValues[0]);
+                    var expectedValue = pair.Value.ExpectedValues[0];
+                    var actualValue = pair.Value.ActualValues[0];
+
+                    var expectedObjectFlattenedValues = this.ObjectFlattener.FlattenObject(null, expectedValue);
+                    var actualObjectFlattenedValues = this.ObjectFlattener.FlattenObject(null, actualValue);
 
                     var objectLevelDifferences = this.UnderlyingComparer.CompareValues(expectedObjectFlattenedValues, actualObjectFlattenedValues).ToList();
                     if (objectLevelDifferences.Count == 0)
                     {
-                        ++matchingKeysCount;
+                        matching.Add(pair.Key, (Expected: expectedValue, Actual: actualValue));
                         continue;
                     }
 
-                    differences.Add(new KeyValuePair<IReadOnlyDictionary<string, object>, IReadOnlyCollection<KeyValuePair<string, ComparisonResults>>>(pair.Key, objectLevelDifferences));
+                    differences.Add(pair.Key, (Expected: expectedValue, Actual: actualValue, Differences: objectLevelDifferences));
                     continue;
                 }
-
-                incomparable.Add(new KeyValuePair<IReadOnlyDictionary<string, object>, (IReadOnlyCollection<T> ExpectedObjects, IReadOnlyCollection<T> ActualObjects)>(pair.Key, (pair.Value.ExpectedValues, pair.Value.ActualValues)));
             }
 
             return new ComparisonResults<T>
             {
-                MatchingKeysCount = matchingKeysCount,
+                MatchingObjects = matching,
                 AdditionalKeys = additionalKeys,
                 MissingKeys = missingKeys,
                 Differences = differences,
@@ -147,11 +155,11 @@ namespace BorsukSoftware.Testing.Comparison.Extensions.Collections
 
         public class ComparisonResults<T>
         {
-            public int MatchingKeysCount { get; set; } = 0;
-            public IReadOnlyCollection<IReadOnlyDictionary<string, object>> MissingKeys { get; set; }
-            public IReadOnlyCollection<IReadOnlyDictionary<string, object>> AdditionalKeys { get; set; }
-            public IReadOnlyCollection<KeyValuePair<IReadOnlyDictionary<string, object>, IReadOnlyCollection<KeyValuePair<string, ComparisonResults>>>> Differences { get; set; }
-            public IReadOnlyCollection<KeyValuePair<IReadOnlyDictionary<string, object>, (IReadOnlyCollection<T> ExpectedObjects, IReadOnlyCollection<T> ActualObjects)>> IncomparableKeys { get; set; }
+            public IReadOnlyDictionary<IReadOnlyDictionary<string, object>, (T Expected, T Actual)> MatchingObjects { get; set; }
+            public IReadOnlyDictionary<IReadOnlyDictionary<string, object>, T> MissingKeys { get; set; }
+            public IReadOnlyDictionary<IReadOnlyDictionary<string, object>, T> AdditionalKeys { get; set; }
+            public IReadOnlyDictionary<IReadOnlyDictionary<string, object>, (T Expected, T Actual, IReadOnlyCollection<KeyValuePair<string, ComparisonResults>> Differences)> Differences { get; set; }
+            public IReadOnlyDictionary<IReadOnlyDictionary<string, object>, (IReadOnlyCollection<T> ExpectedObjects, IReadOnlyCollection<T> ActualObjects)> IncomparableKeys { get; set; }
         }
 
         private class ValuesTuple<T>
