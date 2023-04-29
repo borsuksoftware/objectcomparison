@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -13,7 +13,7 @@ These require additional libraries and hence are not part of the core framework<
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BorsukSoftware.ObjectFlattener.Core" Version="1.0.2" />
+    <PackageReference Include="BorsukSoftware.ObjectFlattener.Core" Version="1.0.3" />
   </ItemGroup>
 
   <ItemGroup>
